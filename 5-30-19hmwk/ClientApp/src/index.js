@@ -1,19 +1,50 @@
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/css/bootstrap-theme.css';
-import './index.css';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import { render } from 'react-dom';
+import PersonAdder from './PersonAdder';
+import PeopleList from './PeopleList';
 
-const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
-const rootElement = document.getElementById('root');
+class App extends React.Component {
+    state = {
+        currentFirst: '',
+        currentLast: '',
+        currentAge: '',
+        allPeople: []
+    }
 
-ReactDOM.render(
-  <BrowserRouter basename={baseUrl}>
-    <App />
-  </BrowserRouter>,
-  rootElement);
+    onFirstTextChange = x => {
+        this.setState({ currentFirst: x.target.value });
+    }
+    onLastTextChange = x => {
+        this.setState({ currentLast: x.target.value });
+    }
+    onAgeTextChange = x => {
+        this.setState({ currentAge: x.target.value });
+    }
+    onClearTable = () => {
+        this.setState({ allPeople: [] });
+    }
+    onSubmitClick = () => {
+        const copy = [...this.state.allPeople];
+        let person = [this.state.currentFirst, this.state.currentLast, this.state.currentAge]
+        copy.push(person);
+        this.setState({ currentFirst: '', currentLast: '', currentAge: '', allPeople: copy });
+    }
 
-registerServiceWorker();
+    render() {
+        return (
+            <div className="container" style={{ marginTop: 40 }}>
+                <PersonAdder
+                    currentFirst={this.state.currentFirst}
+                    currentLast={this.state.currentLast}
+                    currentAge={this.state.currentAge}
+                    firstTextChange={this.onFirstTextChange}
+                    lastTextChange={this.onLastTextChange}
+                    ageTextChange={this.onAgeTextChange}
+                    submitClick={this.onSubmitClick}
+                    clearTable={this.onClearTable} />
+                <PeopleList people={this.state.allPeople} />
+            </div>
+        );
+    }
+}
+render(<App />, document.getElementById('root'));
